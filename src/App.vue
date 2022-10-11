@@ -6,6 +6,7 @@
     <!-- <Skeleton :animated="true" :width="'400px'" :height="'200px'"></Skeleton> -->
     <!-- 新闻长列表组件 -->
     <Article></Article>
+    <div class="beian"><a href="http://beian.miit.gov.cn">蜀ICP备2022007798号-1</a></div>
   </div>
 </template>
 
@@ -23,5 +24,11 @@ export default {
 .main {
   width: 100%;
   height: 100%;
+}
+.beian {
+  text-align: center;
+  a {
+    color: #ccc;
+  }
 }
 </style>

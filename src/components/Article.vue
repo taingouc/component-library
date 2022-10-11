@@ -1,27 +1,30 @@
 <template>
   <div class="article-container" ref="scrollContainer" @scroll.passive="handlerScroll">
     <div :style="{ paddingTop: topBlankFill + 'px', paddingBottom: bottomBlankFill + 'px' }">
-      <div class="article-item" v-for="item in showDataList" :key="item.id">
-        <!-- 新闻左侧标题、评论、来源部分 -->
-        <div class="article-left">
-          <h3>{{ item.title }}</h3>
-          <div class="article-info">
-            <div class="info-left">
-              <span class="iconfont icon-xiaoxi"></span>
-              <span>{{ item.reads }}</span>
-              <span>新浪新闻</span>
-            </div>
-            <div class="info-right">
-              <span>{{ item.date }}</span>
+      <router-link to="/">
+        <div class="article-item" v-for="item in showDataList" :key="item.id">
+          <!-- 新闻左侧标题、评论、来源部分 -->
+          <div class="article-left">
+            <h3>{{ item.title }}</h3>
+            <div class="article-info">
+              <div class="info-left">
+                <span class="iconfont icon-xiaoxi"></span>
+                <span>{{ item.reads }}</span>
+                <span>新浪新闻</span>
+              </div>
+              <div class="info-right">
+                <span>{{ item.date }}</span>
+              </div>
             </div>
           </div>
+          <!-- 新闻右侧图片部分 -->
+          <div class="article-right">
+            <img :src="item.image" alt="" />
+            <!-- <Skeleton :width="'130px'" :height="'79px'" :animated="true"></Skeleton> -->
+          </div>
         </div>
-        <!-- 新闻右侧图片部分 -->
-        <div class="article-right">
-          <img :src="item.image" alt="" />
-          <!-- <Skeleton :width="'130px'" :height="'79px'" :animated="true"></Skeleton> -->
-        </div>
-      </div>
+      </router-link>
+
       <!-- 请求状态下显示对应提示信息 -->
       <div class="msg" v-if="isRequestStatus">
         <h2>{{ msg }}</h2>

@@ -1,4 +1,5 @@
 <template>
+  <!-- 底部导航组件 -->
   <div>
     <div class="footerNav-container">
       <ul @click="getIndex">

@@ -22,7 +22,7 @@ function newsList(num) {
   const list = []
   for (let i = 0; i < 10; i++) {
     const a = '#' + Random.integer(180, 255).toString(16) + Random.integer(140, 255).toString(16) + Random.integer(120, 220).toString(16)
-    list.push(Random.image('600x300', a, 'png'))
+    list.push(Random.image('600x300', a, 'kebig.cn'))
   }
   const result = Mock.mock({
     [`data|${num}`]: [

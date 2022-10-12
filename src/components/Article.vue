@@ -1,7 +1,7 @@
 <template>
   <div class="article-container" ref="scrollContainer" @scroll.passive="handlerScroll">
-    <div :style="{ paddingTop: topBlankFill + 'px', paddingBottom: bottomBlankFill + 'px' }">
-      <router-link to="/">
+    <div :style="blankFillStyle">
+      <router-link to="/info">
         <div class="article-item" v-for="item in showDataList" :key="item.id">
           <!-- 新闻左侧标题、评论、来源部分 -->
           <div class="article-left">
@@ -10,7 +10,7 @@
               <div class="info-left">
                 <span class="iconfont icon-xiaoxi"></span>
                 <span>{{ item.reads }}</span>
-                <span>新浪新闻</span>
+                <span>小柯快报</span>
               </div>
               <div class="info-right">
                 <span>{{ item.date }}</span>
@@ -19,15 +19,26 @@
           </div>
           <!-- 新闻右侧图片部分 -->
           <div class="article-right">
-            <img :src="item.image" alt="" />
-            <!-- <Skeleton :width="'130px'" :height="'79px'" :animated="true"></Skeleton> -->
+            <img :src="item.image" alt="" v-if="!isRequestStatus" />
+            <Skeleton v-else :width="'130px'" :height="'79px'" :animated="true"></Skeleton>
           </div>
         </div>
       </router-link>
 
       <!-- 请求状态下显示对应提示信息 -->
       <div class="msg" v-if="isRequestStatus">
-        <h2>{{ msg }}</h2>
+        <span style="--i: 1">小</span>
+        <span style="--i: 2">柯</span>
+        <span style="--i: 3">正</span>
+        <span style="--i: 4">在</span>
+        <span style="--i: 5">努</span>
+        <span style="--i: 6">力</span>
+        <span style="--i: 7">加</span>
+        <span style="--i: 8">载</span>
+        <span style="--i: 9">中</span>
+        <span style="--i: 10">.</span>
+        <span style="--i: 11">.</span>
+        <span style="--i: 12">.</span>
       </div>
     </div>
   </div>
@@ -41,14 +52,14 @@ export default {
     return {
       // 数据请求状态
       isRequestStatus: true,
-      // 请求数据提示信息
-      msg: '小二正在努力加载中，请耐心等待...',
       // 屏幕高度变化 最大容积个数
       containSize: 0,
       // 记录滚动后可视区域的第一个元素的索引
-      starIndex: 0
+      starIndex: 0,
       // 定义滚动事件的节流阀
       // scrollThrottle: true
+      // 使用keep-alive缓存组件后记录当前滚动距离顶部的位移
+      currentScrollTop: 0
     }
   },
   methods: {
@@ -99,6 +110,8 @@ export default {
     },
     // 滚动时具体的事件逻辑
     setScroll() {
+      // 记录滚动距离顶部的位移
+      this.currentScrollTop = this.$refs.scrollContainer.scrollTop
       // 滚动时页面第一个元素的索引
       this.starIndex = ~~(this.$refs.scrollContainer.scrollTop / 100)
       // 监听滚动到底部时
@@ -107,9 +120,9 @@ export default {
         this.isRequestStatus = true
         // 设置一秒后发起请求新增数据
         const timer = setTimeout(() => {
-          this.getNewsList(10)
+          this.getNewsList(22)
           clearTimeout(timer)
-        }, 1000)
+        }, 1500)
       }
     }
   },
@@ -117,7 +130,7 @@ export default {
     ...mapState(['newList']),
     // 计算滚动后可视区域的最后一个元素的索引
     endIndex() {
-      let endIndex = this.starIndex + this.containSize
+      let endIndex = this.starIndex + this.containSize * 2
       if (!this.newList[endIndex]) {
         endIndex = this.newList.length - 1
       }
@@ -125,15 +138,26 @@ export default {
     },
     // 定义一个待显示的数组列表元素
     showDataList() {
-      return this.newList.slice(this.starIndex, this.endIndex)
+      let TopIndex = 0
+      if (this.starIndex <= this.containSize) {
+        TopIndex = 0
+      } else {
+        TopIndex = this.starIndex - this.containSize
+      }
+      return this.newList.slice(TopIndex, this.endIndex)
     },
-    // 计算上空白填充的高度
-    topBlankFill() {
-      return this.starIndex * 100
-    },
-    // 计算下空白填充的高度
-    bottomBlankFill() {
-      return (this.newList.length - 1 - this.endIndex) * 100
+    // 计算上下空白填充的高度
+    blankFillStyle() {
+      let TopIndex = 0
+      if (this.starIndex <= this.containSize) {
+        TopIndex = 0
+      } else {
+        TopIndex = this.starIndex - this.containSize
+      }
+      return {
+        paddingTop: TopIndex * 100 + 'px',
+        paddingBottom: (this.newList.length - 1 - this.endIndex) * 100 + 'px'
+      }
     }
   },
   watch: {
@@ -149,7 +173,7 @@ export default {
   },
   created() {
     // 页面一进入需要获取数据
-    this.getNewsList(20)
+    this.getNewsList(22)
   },
   mounted() {
     // DOM渲染到页面 计算页面最大容积数
@@ -158,6 +182,12 @@ export default {
     window.onresize = this.getContainSize
     // 页面翻转 计算页面最大容积数
     window.orientationchange = this.getContainSize
+  },
+  // 路由keep-alive,可以调用activated这个生命周期
+  activated() {
+    this.$nextTick(() => {
+      this.$refs.scrollContainer.scrollTop = this.currentScrollTop
+    })
   }
 }
 </script>
@@ -176,6 +206,9 @@ export default {
     padding: 10px 10px;
     display: flex;
     border-bottom: 1px solid #d9d9d9;
+    &:active {
+      background-color: #ccc;
+    }
   }
   &-left {
     flex: 1;
@@ -213,8 +246,30 @@ export default {
 }
 .msg {
   width: 100%;
-  height: 50px;
+  height: 40px;
   text-align: center;
-  line-height: 50px;
+  line-height: 40px;
+  position: relative;
+  span {
+    margin-right: 2px;
+    position: relative;
+    display: inline-block;
+    text-shadow: 1px 0px #333;
+    text-transform: uppercase;
+    animation: animate 1s ease-in-out infinite;
+    animation-delay: calc(0.1s * var(--i));
+  }
+}
+@keyframes animate {
+  0% {
+    transform: translateY(0px);
+  }
+  20% {
+    transform: translateY(-10px);
+  }
+  40%,
+  100% {
+    transform: translateY(0px);
+  }
 }
 </style>

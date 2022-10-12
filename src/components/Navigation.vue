@@ -59,19 +59,38 @@ export default {
       const arr = e.composedPath().filter((item) => item.nodeName === 'LI' && item.className === 'footerNav-item')
       if (arr.length) {
         this.index = Number(arr[0].dataset.index)
+        if (this.index === 0) {
+          this.$router.push('/news')
+        } else if (this.index === 1) {
+          this.$router.push('/profile')
+        } else if (this.index === 2) {
+          this.$router.push('/messages')
+        } else if (this.index === 3) {
+          this.$router.push('/game')
+        } else if (this.index === 4) {
+          this.$router.push('/setting')
+        }
       }
     },
     // 根据当前视口宽度获取每个导航按钮的宽度
     getOneNavWidth() {
-      this.oneNavWidth = (document.documentElement.clientWidth - 50) / 5
+      this.$nextTick(() => {
+        this.oneNavWidth = (document.documentElement.clientWidth - 50) / 5
+      })
     }
   },
   mounted() {
     this.getOneNavWidth()
     // 页面缩放 计算每个导航按钮的宽度
-    window.onresize = this.getOneNavWidth
+    window.addEventListener('resize', () => {
+      this.getOneNavWidth()
+    })
+    // window.onresize = this.getOneNavWidth
     // 页面翻转 计算每个导航按钮的宽度
-    window.orientationchange = this.getOneNavWidth
+    window.addEventListener('orientationchange', () => {
+      this.getOneNavWidth()
+    })
+    // window.orientationchange = this.getOneNavWidth
   }
 }
 </script>

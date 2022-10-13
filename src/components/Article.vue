@@ -120,7 +120,7 @@ export default {
         this.isRequestStatus = true
         // 设置一秒后发起请求新增数据
         const timer = setTimeout(() => {
-          this.getNewsList(22)
+          this.getNewsList(10)
           clearTimeout(timer)
         }, 1500)
       }
@@ -130,7 +130,7 @@ export default {
     ...mapState(['newList']),
     // 计算滚动后可视区域的最后一个元素的索引
     endIndex() {
-      let endIndex = this.starIndex + this.containSize * 2
+      let endIndex = this.starIndex + this.containSize
       if (!this.newList[endIndex]) {
         endIndex = this.newList.length - 1
       }
@@ -138,24 +138,12 @@ export default {
     },
     // 定义一个待显示的数组列表元素
     showDataList() {
-      let TopIndex = 0
-      if (this.starIndex <= this.containSize) {
-        TopIndex = 0
-      } else {
-        TopIndex = this.starIndex - this.containSize
-      }
-      return this.newList.slice(TopIndex, this.endIndex)
+      return this.newList.slice(this.starIndex, this.endIndex)
     },
     // 计算上下空白填充的高度
     blankFillStyle() {
-      let TopIndex = 0
-      if (this.starIndex <= this.containSize) {
-        TopIndex = 0
-      } else {
-        TopIndex = this.starIndex - this.containSize
-      }
       return {
-        paddingTop: TopIndex * 100 + 'px',
+        paddingTop: this.starIndex * 100 + 'px',
         paddingBottom: (this.newList.length - 1 - this.endIndex) * 100 + 'px'
       }
     }
@@ -173,7 +161,7 @@ export default {
   },
   created() {
     // 页面一进入需要获取数据
-    this.getNewsList(22)
+    this.getNewsList(20)
   },
   mounted() {
     // DOM渲染到页面 计算页面最大容积数
